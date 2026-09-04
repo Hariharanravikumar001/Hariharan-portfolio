@@ -33,6 +33,20 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const res = await authApi.login({ email, password });
     if (res.data.success) {
+      if (res.data.mfaRequired) {
+        return res.data;
+      }
+      setToken(res.data.token);
+      setUser(res.data.user);
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      return res.data;
+    }
+  };
+
+  const verifyMfa = async (tempToken, code) => {
+    const res = await authApi.verifyMfa({ tempToken, code });
+    if (res.data.success) {
       setToken(res.data.token);
       setUser(res.data.user);
       localStorage.setItem('token', res.data.token);
@@ -51,7 +65,7 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = Boolean(token && user);
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated, loading, login, verifyMfa, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -38,6 +38,7 @@ api.interceptors.response.use(
 // API Service Endpoints
 export const authApi = {
   login: (credentials) => api.post('/auth/login', credentials),
+  verifyMfa: (data) => api.post('/auth/verify-mfa', data),
   getMe: () => api.get('/auth/me'),
   updatePassword: (passwords) => api.put('/auth/update-password', passwords),
 };

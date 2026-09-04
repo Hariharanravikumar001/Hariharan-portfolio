@@ -103,7 +103,7 @@ const AdminSkills = () => {
             <tr style={{ borderBottom: '1px solid var(--border-glass)', background: 'var(--bg-input)' }}>
               <th style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Skill Name</th>
               <th style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Category</th>
-              <th style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Proficiency</th>
+              <th style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Status</th>
               <th style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.85rem', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
@@ -117,14 +117,7 @@ const AdminSkills = () => {
                   <span className="badge">{skill.category}</span>
                 </td>
                 <td style={{ padding: '14px 20px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ width: '120px', height: '6px', background: 'var(--bg-input)', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${skill.proficiency}%`, height: '100%', background: 'var(--accent-cyan)' }} />
-                    </div>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-                      {skill.proficiency}%
-                    </span>
-                  </div>
+                  <span className="badge" style={{ color: 'var(--accent-cyan)' }}>Active / Proficient</span>
                 </td>
                 <td style={{ padding: '14px 20px', textAlign: 'right' }}>
                   <div style={{ display: 'inline-flex', gap: '8px' }}>
@@ -189,21 +182,6 @@ const AdminSkills = () => {
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
-              </div>
-
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Proficiency</label>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)', fontWeight: 700 }}>{formData.proficiency}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="10"
-                  max="100"
-                  value={formData.proficiency}
-                  onChange={(e) => setFormData({ ...formData, proficiency: Number(e.target.value) })}
-                  style={{ width: '100%', accentColor: 'var(--accent-cyan)' }}
-                />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>

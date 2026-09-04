@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { login, getMe, updatePassword } = require('../controllers/authController');
+const { login, verifyMfa, getMe, updatePassword } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 const { authLimiter } = require('../middleware/rateLimiter');
 
 router.post('/login', authLimiter, login);
+router.post('/verify-mfa', authLimiter, verifyMfa);
 router.get('/me', protect, getMe);
 router.put('/update-password', protect, updatePassword);
 
