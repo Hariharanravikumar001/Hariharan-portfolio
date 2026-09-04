@@ -13,8 +13,8 @@ import Certificates from './pages/public/Certificates';
 import Resume from './pages/public/Resume';
 import Contact from './pages/public/Contact';
 
-// Admin Pages
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminMfaApproval from './pages/admin/AdminMfaApproval';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProfile from './pages/admin/AdminProfile';
@@ -53,8 +53,9 @@ function App() {
         <Route path="/contact" element={<Contact />} />
       </Route>
 
-      {/* Admin Login */}
+      {/* Admin Login & Mobile MFA Approval */}
       <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/approve-mfa" element={<AdminMfaApproval />} />
 
       {/* Protected Admin Portal */}
       <Route path="/admin" element={<AdminLayout />}>
