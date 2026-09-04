@@ -294,7 +294,7 @@ const seedData = async () => {
   await Certificate.insertMany(certificates);
 
   console.log('Seeding Multiple Resumes (All 5 Categories)...');
-  const dummyPdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+  const dummyPdfUrl = '/resumes/sample_resume.pdf';
   const resumes = [
     {
       title: 'Full Stack Developer Resume',

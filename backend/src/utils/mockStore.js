@@ -22,7 +22,7 @@ const mockProfile = {
     linkedin: 'https://linkedin.com/in/hariharan-ravikumar',
     twitter: 'https://twitter.com/hariharan_dev',
     portfolio: 'https://hariharan.dev',
-    email: 'hariharan@example.com',
+    email: 'admin@hariharan.dev',
     phone: '+91 98765 43210',
     whatsapp: '+91 98765 43210',
   },
@@ -215,7 +215,7 @@ const mockCertificates = [
   },
 ];
 
-const dummyPdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+const dummyPdfUrl = '/resumes/sample_resume.pdf';
 let mockResumes = [
   {
     _id: 'r1',
