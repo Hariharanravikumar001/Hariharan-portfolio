@@ -1,0 +1,16 @@
+{
+  "name": "hariharan-portfolio-platform",
+  "version": "1.0.0",
+  "description": "Enterprise-style Personal Portfolio and Multi-Resume Management System for Hariharan Ravikumar",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "seed": "npm --prefix backend run seed",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "start:backend": "npm --prefix backend run start"
+  },
+  "keywords": ["portfolio", "resume-manager", "mern", "react", "express", "mongodb", "hariharan"],
+  "author": "Hariharan Ravikumar",
+  "license": "MIT"
+}
