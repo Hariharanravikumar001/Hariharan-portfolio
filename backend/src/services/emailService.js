@@ -89,7 +89,7 @@ const sendUserAutoReply = async ({ name, email }) => {
   const transporter = createTransporter();
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM || '"Hariharan Ravikumar" <hariharan@example.com>',
+    from: process.env.EMAIL_FROM || '"Hariharan Ravikumar" <admin@hariharan.dev>',
     to: email,
     subject: `Thank you for reaching out, ${name}! | Hariharan Ravikumar`,
     html: `

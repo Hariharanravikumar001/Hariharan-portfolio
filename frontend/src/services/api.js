@@ -38,13 +38,6 @@ api.interceptors.response.use(
 // API Service Endpoints
 export const authApi = {
   login: (credentials) => api.post('/auth/login', credentials),
-  initiateZohoPush: (data) => api.post('/auth/zoho-push', data),
-  verifyMfa: (data) => api.post('/auth/verify-mfa', data),
-  checkMfaStatus: (sessionId) => api.get(`/auth/mfa-status/${sessionId}`),
-  getMfaSession: (sessionId) => api.get(`/auth/mfa-session/${sessionId}`),
-  approveMfa: (data) => api.post('/auth/mfa-approve', data),
-  rejectMfa: (data) => api.post('/auth/mfa-reject', data),
-  resendPush: (data) => api.post('/auth/resend-push', data),
   getMe: () => api.get('/auth/me'),
   updatePassword: (passwords) => api.put('/auth/update-password', passwords),
 };

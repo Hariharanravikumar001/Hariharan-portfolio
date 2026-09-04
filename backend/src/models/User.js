@@ -30,14 +30,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    mfaEnabled: {
-      type: Boolean,
-      default: true,
-    },
-    mfaSecret: {
-      type: String,
-      select: false,
-    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
