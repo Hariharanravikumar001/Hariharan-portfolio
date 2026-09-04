@@ -51,7 +51,9 @@ app.use(
       if (
         allowedOrigins.includes(origin) ||
         process.env.NODE_ENV === 'development' ||
-        origin.endsWith('.vercel.app')
+        origin.endsWith('.vercel.app') ||
+        origin.endsWith('.onrender.com') ||
+        origin.endsWith('.railway.app')
       ) {
         return callback(null, true);
       }
