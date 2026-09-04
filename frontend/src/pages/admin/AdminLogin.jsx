@@ -20,26 +20,26 @@ import {
   RefreshCw,
   ExternalLink,
   CheckCircle2,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { authApi } from '../../services/api';
 
 const AdminLogin = () => {
-  const [step, setStep] = useState(1); // 1: Credentials, 2: Zoho OneAuth Push MFA
+  const [step, setStep] = useState(1); // 1: Login Options (Email/Password or Zoho Push), 2: Zoho OneAuth Waiting Screen
   const [email, setEmail] = useState('admin@hariharan.dev');
   const [password, setPassword] = useState('Admin@12345');
   const [mfaCode, setMfaCode] = useState('');
   const [mfaData, setMfaData] = useState(null); // { sessionId, mobileApprovalUrl, tempToken, otpauthUri, secret, user }
-  const [showQrDetails, setShowQrDetails] = useState(false);
   const [showManualTotp, setShowManualTotp] = useState(false);
   const [copiedKey, setCopiedKey] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
   const [error, setError] = useState('');
   const [infoMessage, setInfoMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [zohoLoading, setZohoLoading] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
 
-  const { login, verifyMfa, setAuthSession } = useAuth();
+  const { login, initiateZohoPush, verifyMfa, setAuthSession } = useAuth();
   const navigate = useNavigate();
   const pollingIntervalRef = useRef(null);
 
@@ -52,7 +52,7 @@ const AdminLogin = () => {
     };
   }, []);
 
-  // Poll for Mobile Approval when on Step 2
+  // Poll for Mobile Approval when on Step 2 (Zoho OneAuth Push)
   useEffect(() => {
     if (step === 2 && mfaData?.sessionId && !isApproved) {
       pollingIntervalRef.current = setInterval(async () => {
@@ -88,8 +88,8 @@ const AdminLogin = () => {
     }
   }, [step, mfaData, isApproved]);
 
-  // Step 1: Submit Credentials & trigger automatic mobile push
-  const handleCredentialSubmit = async (e) => {
+  // Option A: Direct Email and Password Sign In
+  const handlePasswordLogin = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
@@ -97,18 +97,34 @@ const AdminLogin = () => {
       setInfoMessage('');
       const res = await login(email, password);
 
-      if (res && res.mfaRequired) {
+      if (res && res.success && res.token) {
+        navigate('/admin');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Invalid email or password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Option B: 1-Click Zoho OneAuth Mobile Push Sign In
+  const handleZohoPushLogin = async () => {
+    try {
+      setZohoLoading(true);
+      setError('');
+      setInfoMessage('');
+      const res = await initiateZohoPush(email);
+
+      if (res && res.success) {
         setMfaData(res);
         setStep(2);
         setMfaCode('');
         setInfoMessage('Push notification sent to your Zoho OneAuth mobile app.');
-      } else {
-        navigate('/admin');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid credentials or connection error');
+      setError(err.response?.data?.message || 'Failed to dispatch Zoho OneAuth mobile notification.');
     } finally {
-      setLoading(false);
+      setZohoLoading(false);
     }
   };
 
@@ -180,14 +196,6 @@ const AdminLogin = () => {
     }
   };
 
-  const handleCopyMobileLink = () => {
-    if (mfaData?.mobileApprovalUrl) {
-      navigator.clipboard.writeText(mfaData.mobileApprovalUrl);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
-    }
-  };
-
   return (
     <div
       style={{
@@ -203,12 +211,12 @@ const AdminLogin = () => {
         className="glass-panel"
         style={{
           width: '100%',
-          maxWidth: step === 1 ? '450px' : '530px',
+          maxWidth: step === 1 ? '480px' : '530px',
           padding: '36px 32px',
           transition: 'all 0.3s ease',
         }}
       >
-        {/* Step Indicator Header */}
+        {/* Step Indicator / Header */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div
             style={{
@@ -243,26 +251,6 @@ const AdminLogin = () => {
             )}
           </div>
 
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '4px 12px',
-              borderRadius: '20px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
-              color: 'var(--accent-cyan)',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: '10px',
-            }}
-          >
-            {step === 1 ? 'Step 1 of 2: Admin Credentials' : 'Step 2 of 2: Zoho OneAuth Mobile Push'}
-          </div>
-
           <h1
             style={{
               fontSize: '1.65rem',
@@ -289,8 +277,8 @@ const AdminLogin = () => {
             {isApproved
               ? 'Mobile biometric check passed. Redirecting to your dashboard...'
               : step === 1
-              ? 'Enter your credentials to trigger automatic Zoho OneAuth mobile approval.'
-              : 'Push notification sent to your Zoho OneAuth mobile. Approve on your phone to login automatically.'}
+              ? 'Sign in using your email and password, or choose Zoho OneAuth for 1-click mobile push approval.'
+              : 'Push notification sent to your Zoho OneAuth mobile app. Approve on your phone to login.'}
           </p>
         </div>
 
@@ -336,115 +324,165 @@ const AdminLogin = () => {
           </div>
         )}
 
-        {/* STEP 1: CREDENTIALS FORM */}
+        {/* STEP 1: DUAL SIGN-IN OPTIONS */}
         {step === 1 && (
-          <form
-            onSubmit={handleCredentialSubmit}
-            style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}
-          >
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
-                  color: 'var(--text-secondary)',
-                  marginBottom: '6px',
-                }}
-              >
-                Email Address
-              </label>
-              <div style={{ position: 'relative' }}>
-                <Mail
-                  size={16}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* OPTION 1: EMAIL AND PASSWORD FORM */}
+            <form
+              onSubmit={handlePasswordLogin}
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            >
+              <div>
+                <label
                   style={{
-                    position: 'absolute',
-                    left: '14px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'var(--text-muted)',
+                    display: 'block',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
+                    marginBottom: '6px',
                   }}
-                />
-                <input
-                  type="email"
-                  required
-                  placeholder="admin@hariharan.dev"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="glass-input"
-                  style={{ paddingLeft: '40px' }}
-                />
+                >
+                  Email Address
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Mail
+                    size={16}
+                    style={{
+                      position: 'absolute',
+                      left: '14px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: 'var(--text-muted)',
+                    }}
+                  />
+                  <input
+                    type="email"
+                    required
+                    placeholder="admin@hariharan.dev"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="glass-input"
+                    style={{ paddingLeft: '40px' }}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
-                  color: 'var(--text-secondary)',
-                  marginBottom: '6px',
-                }}
-              >
-                Password
-              </label>
-              <div style={{ position: 'relative' }}>
-                <Lock
-                  size={16}
+              <div>
+                <label
                   style={{
-                    position: 'absolute',
-                    left: '14px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'var(--text-muted)',
+                    display: 'block',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
+                    marginBottom: '6px',
                   }}
-                />
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="glass-input"
-                  style={{ paddingLeft: '40px' }}
-                />
+                >
+                  Password
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Lock
+                    size={16}
+                    style={{
+                      position: 'absolute',
+                      left: '14px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: 'var(--text-muted)',
+                    }}
+                  />
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="glass-input"
+                    style={{ paddingLeft: '40px' }}
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Zoho OneAuth Security Assurance Badge */}
+              <button
+                type="submit"
+                disabled={loading || zohoLoading}
+                className="btn-primary"
+                style={{ width: '100%', padding: '12px', fontSize: '0.95rem' }}
+              >
+                <span>{loading ? 'Authenticating...' : 'Sign In with Password'}</span>
+                <ArrowRight size={16} />
+              </button>
+            </form>
+
+            {/* DIVIDER */}
             <div
               style={{
-                padding: '10px 14px',
-                borderRadius: '8px',
-                background: 'rgba(56, 189, 248, 0.06)',
-                border: '1px solid rgba(56, 189, 248, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
-                fontSize: '0.8rem',
-                color: 'var(--text-secondary)',
+                margin: '4px 0',
+                color: 'var(--text-muted)',
+                fontSize: '0.76rem',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
               }}
             >
-              <ShieldCheck size={18} color="var(--accent-cyan)" style={{ flexShrink: 0 }} />
-              <span>
-                Protected by <strong>Zoho OneAuth 2FA Mobile Push Approval</strong>
-              </span>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border-glass)' }} />
+              <span style={{ padding: '0 12px' }}>OR SIGN IN WITH ZOHO ONEAUTH</span>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border-glass)' }} />
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary"
-              style={{ width: '100%', padding: '12px', fontSize: '0.95rem', marginTop: '6px' }}
+            {/* OPTION 2: 1-CLICK ZOHO ONEAUTH MOBILE PUSH */}
+            <div
+              style={{
+                background: 'rgba(56, 189, 248, 0.04)',
+                border: '1px solid rgba(56, 189, 248, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                textAlign: 'center',
+              }}
             >
-              <span>{loading ? 'Verifying...' : 'Sign In & Send Zoho OneAuth Push'}</span>
-              <ArrowRight size={16} />
-            </button>
-          </form>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <Smartphone size={18} color="var(--accent-cyan)" />
+                <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Zoho OneAuth Mobile Push
+                </span>
+              </div>
+
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                Click below to send an instant verification prompt to your phone. Approve with <strong>Face ID</strong> or <strong>Fingerprint</strong> to log in.
+              </p>
+
+              <button
+                type="button"
+                onClick={handleZohoPushLogin}
+                disabled={loading || zohoLoading}
+                className="btn-secondary"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  fontSize: '0.92rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%)',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                <BellRing size={16} color="var(--accent-cyan)" />
+                <span>{zohoLoading ? 'Sending Mobile Push...' : 'Send Zoho OneAuth Mobile Notification'}</span>
+              </button>
+            </div>
+          </div>
         )}
 
-        {/* STEP 2: ZOHO ONEAUTH AUTOMATIC MOBILE PUSH & APPROVAL */}
+        {/* STEP 2: ZOHO ONEAUTH MOBILE WAITING & APPROVAL SCREEN */}
         {step === 2 && (
           <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Automatic Mobile Push Waiting Card */}
@@ -481,7 +519,7 @@ const AdminLogin = () => {
                 Waiting for Zoho OneAuth Mobile Approval...
               </h3>
               <p style={{ margin: '0 0 16px 0', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-                Check your mobile phone for the Zoho OneAuth prompt. Tap <strong>Approve</strong> (using Face ID or Fingerprint) to unlock this browser.
+                Check your mobile phone for the Zoho OneAuth notification. Tap <strong>Approve</strong> (using Face ID or Fingerprint) to unlock this browser.
               </p>
 
               {/* Supported Biometrics Badges */}
@@ -772,7 +810,7 @@ const AdminLogin = () => {
               )}
             </div>
 
-            {/* Back to Step 1 */}
+            {/* Back to Login Options */}
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <button
                 type="button"
@@ -794,7 +832,7 @@ const AdminLogin = () => {
                 }}
               >
                 <ArrowLeft size={14} />
-                <span>Back to Email & Password</span>
+                <span>Back to Sign In Options</span>
               </button>
             </div>
           </div>

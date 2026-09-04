@@ -42,7 +42,7 @@ const getUserObject = async (id, fallbackEmail) => {
   };
 };
 
-// @desc    Auth admin & initiate Zoho OneAuth MFA with automatic push notification to mobile
+// @desc    Option A: Direct Email and Password Sign In
 // @route   POST /api/auth/login
 // @access  Public
 const login = async (req, res, next) => {
@@ -56,11 +56,9 @@ const login = async (req, res, next) => {
     const mongoose = require('mongoose');
     const defaultEmail = process.env.ADMIN_EMAIL || 'admin@hariharan.dev';
     const defaultPass = process.env.ADMIN_PASSWORD || 'Admin@12345';
-    const defaultSecret = process.env.ADMIN_MFA_SECRET || 'JBSWY3DPEHPK3PXP';
 
     let authenticatedUserId = null;
     let authenticatedEmail = email;
-    let userSecret = defaultSecret;
 
     // Handle offline / development mode without active MongoDB
     if (mongoose.connection.readyState !== 1) {
@@ -68,31 +66,67 @@ const login = async (req, res, next) => {
         authenticatedUserId = 'admin-offline-id';
         authenticatedEmail = defaultEmail;
       } else {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        return res.status(401).json({ success: false, message: 'Invalid email or password' });
       }
     } else {
-      const user = await User.findOne({ email }).select('+password +mfaSecret');
+      const user = await User.findOne({ email }).select('+password');
       if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        return res.status(401).json({ success: false, message: 'Invalid email or password' });
       }
 
       const isMatch = await user.matchPassword(password);
       if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        return res.status(401).json({ success: false, message: 'Invalid email or password' });
       }
 
       authenticatedUserId = user._id;
       authenticatedEmail = user.email;
-
-      if (!user.mfaSecret) {
-        user.mfaSecret = defaultSecret;
-        user.mfaEnabled = true;
-        await user.save();
-      }
-      userSecret = user.mfaSecret;
     }
 
-    // Step 1 passed! Create MFA session for push notification and approval
+    // Direct Login Successful - Generate final JWT
+    const token = generateToken(authenticatedUserId);
+    const userObj = await getUserObject(authenticatedUserId, authenticatedEmail);
+
+    res.json({
+      success: true,
+      token,
+      user: userObj,
+      message: 'Signed in successfully with email and password.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Option B: 1-Click Zoho OneAuth Mobile Push Sign In
+// @route   POST /api/auth/zoho-push
+// @access  Public
+const initiateZohoPush = async (req, res, next) => {
+  try {
+    const defaultEmail = process.env.ADMIN_EMAIL || 'admin@hariharan.dev';
+    const email = req.body.email || defaultEmail;
+
+    const defaultSecret = process.env.ADMIN_MFA_SECRET || 'JBSWY3DPEHPK3PXP';
+    let authenticatedUserId = 'admin-offline-id';
+    let authenticatedEmail = defaultEmail;
+    let userSecret = defaultSecret;
+
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState === 1) {
+      const user = await User.findOne({ email }).select('+mfaSecret');
+      if (user) {
+        authenticatedUserId = user._id;
+        authenticatedEmail = user.email;
+        if (!user.mfaSecret) {
+          user.mfaSecret = defaultSecret;
+          user.mfaEnabled = true;
+          await user.save();
+        }
+        userSecret = user.mfaSecret;
+      }
+    }
+
+    // Create Push Session
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
     const userAgent = req.headers['user-agent'] || 'Chrome / Desktop Browser';
 
@@ -117,23 +151,23 @@ const login = async (req, res, next) => {
     const userObj = await getUserObject(authenticatedUserId, authenticatedEmail);
 
     console.log(`\n======================================================`);
-    console.log(`[ZOHO ONEAUTH 2FA] Push notification sent to mobile device!`);
-    console.log(`User: ${authenticatedEmail}`);
-    console.log(`MFA Session ID: ${mfaSession.sessionId}`);
+    console.log(`[ZOHO ONEAUTH PUSH] Notification sent to Mobile App!`);
+    console.log(`Account: ${authenticatedEmail}`);
+    console.log(`Session ID: ${mfaSession.sessionId}`);
     console.log(`Mobile Approval URL: ${mobileApprovalUrl}`);
     console.log(`======================================================\n`);
 
     res.json({
       success: true,
       mfaRequired: true,
-      mfaMethod: 'Zoho OneAuth',
+      mfaMethod: 'Zoho OneAuth Mobile Push',
       sessionId: mfaSession.sessionId,
       mobileApprovalUrl,
       tempToken,
       secret: userSecret,
       otpauthUri,
       user: userObj,
-      message: 'Automatic push notification sent to your Zoho OneAuth mobile. Approve on your phone to login.',
+      message: 'Zoho OneAuth push notification sent to your mobile. Approve on your phone to login.',
     });
   } catch (error) {
     next(error);
@@ -243,7 +277,7 @@ const approveMfaSession = async (req, res, next) => {
     }
 
     const approved = mfaSessions.approveSession(sessionId, {
-      biometricUsed: biometricUsed || 'Face ID / Fingerprint (Zoho OneAuth)',
+      biometricUsed: biometricUsed || 'Face ID / Fingerprint (Zoho OneAuth Mobile)',
     });
 
     if (!approved) {
@@ -306,7 +340,7 @@ const resendPush = async (req, res, next) => {
     if (!session || session.status !== 'PENDING') {
       return res.status(400).json({
         success: false,
-        message: 'Session expired or not found. Please log in again.',
+        message: 'Session expired or not found. Please initiate login again.',
       });
     }
 
@@ -381,11 +415,10 @@ const verifyMfa = async (req, res, next) => {
     if (!isTotpValid && !isDevPass) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid Zoho OneAuth verification code. Please check your authenticator app and try again.',
+        message: 'Invalid verification code. Please check your app and try again.',
       });
     }
 
-    // If session exists, mark it approved
     if (sessionId) {
       mfaSessions.approveSession(sessionId, { biometricUsed: 'TOTP Code Entry' });
     }
@@ -397,7 +430,7 @@ const verifyMfa = async (req, res, next) => {
       success: true,
       token,
       user: userObj,
-      message: 'Zoho OneAuth verification successful. Welcome to Admin Portal.',
+      message: 'Verification successful. Welcome to Admin Portal.',
     });
   } catch (error) {
     next(error);
@@ -456,6 +489,7 @@ const updatePassword = async (req, res, next) => {
 
 module.exports = {
   login,
+  initiateZohoPush,
   checkMfaStatus,
   getMfaSessionDetails,
   approveMfaSession,

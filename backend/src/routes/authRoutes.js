@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   login,
+  initiateZohoPush,
   checkMfaStatus,
   getMfaSessionDetails,
   approveMfaSession,
@@ -14,8 +15,9 @@ const {
 const { protect } = require('../middleware/authMiddleware');
 const { authLimiter } = require('../middleware/rateLimiter');
 
-// Authentication & Zoho OneAuth Mobile Push Routes
-router.post('/login', authLimiter, login);
+// Authentication Routes
+router.post('/login', authLimiter, login); // Direct email & password login
+router.post('/zoho-push', authLimiter, initiateZohoPush); // 1-Click Zoho OneAuth mobile push login
 router.get('/mfa-status/:sessionId', checkMfaStatus);
 router.get('/mfa-session/:sessionId', getMfaSessionDetails);
 router.post('/mfa-approve', approveMfaSession);

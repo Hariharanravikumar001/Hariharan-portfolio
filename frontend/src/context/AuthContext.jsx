@@ -62,6 +62,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(user));
   };
 
+  const initiateZohoPush = async (email) => {
+    const res = await authApi.initiateZohoPush({ email });
+    return res.data;
+  };
+
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -72,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = Boolean(token && user);
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, loading, login, verifyMfa, setAuthSession, logout }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated, loading, login, initiateZohoPush, verifyMfa, setAuthSession, logout }}>
       {children}
     </AuthContext.Provider>
   );
