@@ -248,11 +248,32 @@ const AdminProfile = () => {
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Twitter / X URL</label>
+              <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Naukri URL</label>
               <input
                 type="text"
-                value={profile.socialLinks?.twitter || ''}
-                onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, twitter: e.target.value } })}
+                placeholder="https://www.naukri.com/mnjuser/profile"
+                value={profile.socialLinks?.naukri || ''}
+                onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, naukri: e.target.value } })}
+                className="glass-input"
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Instagram URL</label>
+              <input
+                type="text"
+                placeholder="https://instagram.com/yourhandle"
+                value={profile.socialLinks?.instagram || ''}
+                onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, instagram: e.target.value } })}
+                className="glass-input"
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Facebook URL</label>
+              <input
+                type="text"
+                placeholder="https://facebook.com/yourprofile"
+                value={profile.socialLinks?.facebook || ''}
+                onChange={(e) => setProfile({ ...profile, socialLinks: { ...profile.socialLinks, facebook: e.target.value } })}
                 className="glass-input"
               />
             </div>

@@ -6,7 +6,8 @@ import {
   Mail,
   Github,
   Linkedin,
-  Twitter,
+  Instagram,
+  Facebook,
   Users,
   Code2,
   Briefcase,
@@ -15,6 +16,7 @@ import {
   ChevronRight,
   Award,
 } from 'lucide-react';
+import NaukriIcon from '../../components/NaukriIcon';
 import { profileApi, projectsApi, analyticsApi } from '../../services/api';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
 
@@ -197,12 +199,13 @@ const Home = () => {
               </div>
 
               {/* Social Links */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Follow Me:</span>
                 <a
                   href={profile?.socialLinks?.github || 'https://github.com/hariharan-ravikumar'}
                   target="_blank"
                   rel="noreferrer"
+                  title="GitHub Profile"
                   style={{
                     color: 'var(--text-primary)',
                     background: 'var(--bg-card)',
@@ -210,6 +213,8 @@ const Home = () => {
                     padding: '8px',
                     borderRadius: '8px',
                     display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
                   <Github size={18} />
@@ -218,6 +223,7 @@ const Home = () => {
                   href={profile?.socialLinks?.linkedin || 'https://linkedin.com/in/hariharan-ravikumar'}
                   target="_blank"
                   rel="noreferrer"
+                  title="LinkedIn Profile"
                   style={{
                     color: '#0a66c2',
                     background: 'var(--bg-card)',
@@ -225,24 +231,64 @@ const Home = () => {
                     padding: '8px',
                     borderRadius: '8px',
                     display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
                   <Linkedin size={18} />
                 </a>
                 <a
-                  href={profile?.socialLinks?.twitter || 'https://twitter.com/hariharan'}
+                  href={profile?.socialLinks?.naukri || 'https://www.naukri.com/mnjuser/profile'}
                   target="_blank"
                   rel="noreferrer"
+                  title="Naukri Profile"
                   style={{
-                    color: '#1da1f2',
                     background: 'var(--bg-card)',
                     border: '1px solid var(--border-glass)',
                     padding: '8px',
                     borderRadius: '8px',
                     display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  <Twitter size={18} />
+                  <NaukriIcon size={18} />
+                </a>
+                <a
+                  href={profile?.socialLinks?.instagram || 'https://instagram.com/hariharan'}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Instagram Profile"
+                  style={{
+                    color: '#e4405f',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-glass)',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Instagram size={18} />
+                </a>
+                <a
+                  href={profile?.socialLinks?.facebook || 'https://facebook.com/hariharan'}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Facebook Profile"
+                  style={{
+                    color: '#1877f2',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-glass)',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Facebook size={18} />
                 </a>
               </div>
             </div>

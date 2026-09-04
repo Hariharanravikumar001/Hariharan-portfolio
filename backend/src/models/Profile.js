@@ -42,9 +42,11 @@ const profileSchema = new mongoose.Schema(
     socialLinks: {
       github: { type: String, default: 'https://github.com/hariharan-ravikumar' },
       linkedin: { type: String, default: 'https://linkedin.com/in/hariharan-ravikumar' },
-      twitter: { type: String, default: 'https://twitter.com/hariharan' },
+      naukri: { type: String, default: 'https://www.naukri.com/mnjuser/profile' },
+      instagram: { type: String, default: 'https://instagram.com/hariharan' },
+      facebook: { type: String, default: 'https://facebook.com/hariharan' },
       portfolio: { type: String, default: 'https://hariharan.dev' },
-      email: { type: String, default: 'hariharan@example.com' },
+      email: { type: String, default: 'admin@hariharan.dev' },
       phone: { type: String, default: '+91 98765 43210' },
       whatsapp: { type: String, default: '+91 98765 43210' },
     },

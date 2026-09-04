@@ -67,9 +67,11 @@ const seedData = async () => {
     socialLinks: {
       github: 'https://github.com/hariharan-ravikumar',
       linkedin: 'https://linkedin.com/in/hariharan-ravikumar',
-      twitter: 'https://twitter.com/hariharan_dev',
+      naukri: 'https://www.naukri.com/mnjuser/profile',
+      instagram: 'https://instagram.com/hariharan',
+      facebook: 'https://facebook.com/hariharan',
       portfolio: 'https://hariharan.dev',
-      email: 'hariharan@example.com',
+      email: 'admin@hariharan.dev',
       phone: '+91 98765 43210',
       whatsapp: '+91 98765 43210',
     },

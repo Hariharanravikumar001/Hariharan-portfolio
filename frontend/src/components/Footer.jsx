@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Linkedin, Twitter, Mail, Phone, Heart, Users, ShieldCheck } from 'lucide-react';
+import { Github, Linkedin, Instagram, Facebook, Mail, Phone, Heart, Users, ShieldCheck } from 'lucide-react';
+import NaukriIcon from './NaukriIcon';
 import { analyticsApi, profileApi } from '../services/api';
 
 const Footer = () => {
@@ -10,6 +11,9 @@ const Footer = () => {
     phone: '+91 98765 43210',
     github: 'https://github.com/hariharan-ravikumar',
     linkedin: 'https://linkedin.com/in/hariharan-ravikumar',
+    naukri: 'https://www.naukri.com/mnjuser/profile',
+    instagram: 'https://instagram.com/hariharan',
+    facebook: 'https://facebook.com/hariharan',
   });
 
   useEffect(() => {
@@ -29,6 +33,9 @@ const Footer = () => {
             phone: links.phone || prev.phone,
             github: links.github || prev.github,
             linkedin: links.linkedin || prev.linkedin,
+            naukri: links.naukri || prev.naukri,
+            instagram: links.instagram || prev.instagram,
+            facebook: links.facebook || prev.facebook,
           }));
         }
       } catch (err) {
@@ -138,12 +145,13 @@ const Footer = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px', flexWrap: 'wrap' }}>
               <a
-                href="https://github.com/hariharan-ravikumar"
+                href={contactInfo.github}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
+                title="GitHub Profile"
                 style={{
                   width: '38px',
                   height: '38px',
@@ -160,10 +168,11 @@ const Footer = () => {
                 <Github size={18} />
               </a>
               <a
-                href="https://linkedin.com/in/hariharan-ravikumar"
+                href={contactInfo.linkedin}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
+                title="LinkedIn Profile"
                 style={{
                   width: '38px',
                   height: '38px',
@@ -180,10 +189,11 @@ const Footer = () => {
                 <Linkedin size={18} />
               </a>
               <a
-                href="https://twitter.com/hariharan"
+                href={contactInfo.naukri}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Twitter"
+                aria-label="Naukri"
+                title="Naukri Profile"
                 style={{
                   width: '38px',
                   height: '38px',
@@ -193,11 +203,52 @@ const Footer = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#1da1f2',
                   textDecoration: 'none',
                 }}
               >
-                <Twitter size={18} />
+                <NaukriIcon size={18} />
+              </a>
+              <a
+                href={contactInfo.instagram}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                title="Instagram Profile"
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-glass)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#e4405f',
+                  textDecoration: 'none',
+                }}
+              >
+                <Instagram size={18} />
+              </a>
+              <a
+                href={contactInfo.facebook}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                title="Facebook Profile"
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-glass)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#1877f2',
+                  textDecoration: 'none',
+                }}
+              >
+                <Facebook size={18} />
               </a>
               <Link
                 to="/admin/login"

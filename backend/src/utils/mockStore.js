@@ -20,7 +20,9 @@ const mockProfile = {
   socialLinks: {
     github: 'https://github.com/hariharan-ravikumar',
     linkedin: 'https://linkedin.com/in/hariharan-ravikumar',
-    twitter: 'https://twitter.com/hariharan_dev',
+    naukri: 'https://www.naukri.com/mnjuser/profile',
+    instagram: 'https://instagram.com/hariharan',
+    facebook: 'https://facebook.com/hariharan',
     portfolio: 'https://hariharan.dev',
     email: 'admin@hariharan.dev',
     phone: '+91 98765 43210',
