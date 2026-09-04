@@ -336,7 +336,7 @@ const AdminLogin = () => {
             {isApproved
               ? 'Authentication confirmed. Redirecting to your dashboard...'
               : step === 1
-              ? 'Sign in directly with your email & password, or choose a Zoho OneAuth MFA mode.'
+              ? 'Enter your administrative credentials to access the admin portal.'
               : 'Select your preferred Zoho OneAuth MFA mode below to complete authentication.'}
           </p>
         </div>
@@ -463,171 +463,14 @@ const AdminLogin = () => {
 
               <button
                 type="submit"
-                disabled={loading || zohoLoading}
+                disabled={loading}
                 className="btn-primary"
                 style={{ width: '100%', padding: '12px', fontSize: '0.95rem' }}
               >
-                <span>{loading ? 'Authenticating...' : 'Sign In with Password'}</span>
+                <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
                 <ArrowRight size={16} />
               </button>
             </form>
-
-            {/* DIVIDER */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                margin: '2px 0',
-                color: 'var(--text-muted)',
-                fontSize: '0.74rem',
-                fontWeight: 700,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-              }}
-            >
-              <div style={{ flex: 1, height: '1px', background: 'var(--border-glass)' }} />
-              <span style={{ padding: '0 12px' }}>OR CHOOSE ZOHO ONEAUTH MFA MODE</span>
-              <div style={{ flex: 1, height: '1px', background: 'var(--border-glass)' }} />
-            </div>
-
-            {/* ZOHO ONEAUTH MFA MODES SELECTOR GRID */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-              {/* Mode 1: Mobile Push */}
-              <button
-                type="button"
-                onClick={() => handleStartZohoMfaMode('push')}
-                disabled={loading || zohoLoading}
-                className="glass-card"
-                style={{
-                  padding: '14px 12px',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
-                  background: 'rgba(56, 189, 248, 0.05)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  borderRadius: '10px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <BellRing size={20} color="var(--accent-cyan)" />
-                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--accent-cyan)', background: 'rgba(56, 189, 248, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>
-                    RECOMMENDED
-                  </span>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Mobile Push
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    1-Tap prompt on phone
-                  </div>
-                </div>
-              </button>
-
-              {/* Mode 2: QR Code Sign-In */}
-              <button
-                type="button"
-                onClick={() => handleStartZohoMfaMode('qr')}
-                disabled={loading || zohoLoading}
-                className="glass-card"
-                style={{
-                  padding: '14px 12px',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  border: '1px solid rgba(16, 185, 129, 0.25)',
-                  background: 'rgba(16, 185, 129, 0.05)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  borderRadius: '10px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <QrCode size={20} color="var(--accent-emerald)" />
-                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--accent-emerald)', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>
-                    FAST
-                  </span>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    QR Code Sign-in
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Scan with Zoho OneAuth
-                  </div>
-                </div>
-              </button>
-
-              {/* Mode 3: Biometric Touch */}
-              <button
-                type="button"
-                onClick={() => handleStartZohoMfaMode('biometric')}
-                disabled={loading || zohoLoading}
-                className="glass-card"
-                style={{
-                  padding: '14px 12px',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  border: '1px solid rgba(168, 85, 247, 0.25)',
-                  background: 'rgba(168, 85, 247, 0.05)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  borderRadius: '10px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Fingerprint size={20} color="var(--accent-purple)" />
-                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--accent-purple)', background: 'rgba(168, 85, 247, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>
-                    SECURE
-                  </span>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Biometrics
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Face ID / Touch Sensor
-                  </div>
-                </div>
-              </button>
-
-              {/* Mode 4: 6-Digit TOTP Code */}
-              <button
-                type="button"
-                onClick={() => handleStartZohoMfaMode('totp')}
-                disabled={loading || zohoLoading}
-                className="glass-card"
-                style={{
-                  padding: '14px 12px',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  border: '1px solid rgba(245, 158, 11, 0.25)',
-                  background: 'rgba(245, 158, 11, 0.05)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  borderRadius: '10px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <KeyRound size={20} color="var(--accent-amber)" />
-                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--accent-amber)', background: 'rgba(245, 158, 11, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>
-                    OFFLINE
-                  </span>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    6-Digit TOTP
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Time-based code in app
-                  </div>
-                </div>
-              </button>
-            </div>
           </div>
         )}
 
