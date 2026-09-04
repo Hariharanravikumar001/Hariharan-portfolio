@@ -7,7 +7,6 @@ const Project = require('../src/models/Project');
 const Experience = require('../src/models/Experience');
 const Certificate = require('../src/models/Certificate');
 const Resume = require('../src/models/Resume');
-const Blog = require('../src/models/Blog');
 const Message = require('../src/models/Message');
 const Visitor = require('../src/models/Visitor');
 const Download = require('../src/models/Download');
@@ -34,7 +33,6 @@ const seedData = async () => {
     Experience.deleteMany(),
     Certificate.deleteMany(),
     Resume.deleteMany(),
-    Blog.deleteMany(),
     Message.deleteMany(),
     Visitor.deleteMany(),
     Download.deleteMany(),
@@ -365,79 +363,6 @@ const seedData = async () => {
     },
   ];
   await Resume.insertMany(resumes);
-
-  console.log('Seeding Blog Posts...');
-  const blogs = [
-    {
-      title: 'Mastering the MERN Stack: Architectural Patterns for Scalable Web Apps',
-      slug: 'mastering-mern-stack-architectural-patterns',
-      summary:
-        'A comprehensive guide on structuring Node.js controllers, decoupling business logic, and architecting modular React applications.',
-      content: `
-### Introduction
-
-Building enterprise-grade applications with MongoDB, Express, React, and Node.js requires more than just connecting endpoints. In this article, we explore clean code principles, modular folder structures, and separation of concerns.
-
-### 1. Separation of Concerns in Express
-
-Avoid fat route files. Always decouple your routing declarations from your business controller logic:
-
-\`\`\`javascript
-// Clean route declaration
-router.post('/login', authLimiter, login);
-router.get('/me', protect, getMe);
-\`\`\`
-
-### 2. Scalable State Management in React
-
-For medium-to-large single-page applications, combine custom React hooks with lightweight Context providers to avoid unnecessary re-renders.
-
-### Conclusion
-
-Consistency and modularity ensure your application remains maintainable as features expand.
-      `,
-      category: 'Full Stack',
-      tags: ['MERN', 'Node.js', 'React', 'MongoDB', 'Architecture'],
-      readTime: '6 min read',
-      views: 312,
-      published: true,
-      comments: [
-        {
-          name: 'Arun Kumar',
-          email: 'arun@example.com',
-          comment: 'Outstanding architectural breakdown Hariharan! The tips on controller decoupling are spot on.',
-        },
-      ],
-    },
-    {
-      title: 'Building Modern Glassmorphism UIs in React without Performance Penalties',
-      slug: 'building-glassmorphism-uis-react',
-      summary:
-        'How to leverage CSS backdrop-filter, responsive blur gradients, and GPU acceleration for ultra-slick dark mode designs.',
-      content: `
-### The Power of Frosted Glass
-
-Glassmorphism creates depth and visual hierarchy by using semi-transparent backgrounds with background blur filters.
-
-\`\`\`css
-.glass-card {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-\`\`\`
-
-By ensuring hardware acceleration with proper transform properties, you achieve 60 FPS smooth scrolling.
-      `,
-      category: 'UI/UX & Frontend',
-      tags: ['CSS3', 'Glassmorphism', 'Frontend', 'React', 'Design'],
-      readTime: '4 min read',
-      views: 184,
-      published: true,
-      comments: [],
-    },
-  ];
-  await Blog.insertMany(blogs);
 
   console.log('Seeding Sample Messages & Analytics Visitors...');
   await Message.create({

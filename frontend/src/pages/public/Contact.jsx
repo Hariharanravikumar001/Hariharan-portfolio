@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Sparkles, MessageCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { contactApi } from '../../services/api';
+import { contactApi, profileApi } from '../../services/api';
 
 const Contact = () => {
+  const [profile, setProfile] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,6 +18,16 @@ const Contact = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [serverMessage, setServerMessage] = useState('');
+
+  useEffect(() => {
+    profileApi.get()
+      .then((res) => {
+        if (res.data.success) {
+          setProfile(res.data.data);
+        }
+      })
+      .catch((err) => console.error('Failed to load profile details in Contact page:', err));
+  }, []);
 
   const validate = () => {
     const errs = {};
@@ -127,8 +138,11 @@ const Contact = () => {
               </div>
               <div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Email Inquiries</div>
-                <a href="mailto:hariharan@example.com" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}>
-                  hariharan@example.com
+                <a
+                  href={`mailto:${profile?.socialLinks?.email || 'hariharan@hariharan.dev'}`}
+                  style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}
+                >
+                  {profile?.socialLinks?.email || 'hariharan@hariharan.dev'}
                 </a>
               </div>
             </div>
@@ -151,7 +165,12 @@ const Contact = () => {
               </div>
               <div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Phone & WhatsApp</div>
-                <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>+91 98765 43210</div>
+                <a
+                  href={`tel:${(profile?.socialLinks?.phone || '+91 98765 43210').replace(/\s+/g, '')}`}
+                  style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}
+                >
+                  {profile?.socialLinks?.phone || '+91 98765 43210'}
+                </a>
               </div>
             </div>
 

@@ -1,23 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Github, Linkedin, Twitter, Mail, Phone, Heart, Users, ShieldCheck } from 'lucide-react';
-import { analyticsApi } from '../services/api';
+import { analyticsApi, profileApi } from '../services/api';
 
 const Footer = () => {
   const [visitorStats, setVisitorStats] = useState({ visitorCount: 0, downloadCount: 0 });
+  const [contactInfo, setContactInfo] = useState({
+    email: 'hariharan@hariharan.dev',
+    phone: '+91 98765 43210',
+    github: 'https://github.com/hariharan-ravikumar',
+    linkedin: 'https://linkedin.com/in/hariharan-ravikumar',
+  });
 
   useEffect(() => {
-    const fetchCounters = async () => {
+    const fetchData = async () => {
       try {
-        const res = await analyticsApi.getPublicCounter();
-        if (res.data.success) {
-          setVisitorStats(res.data.data);
+        const [counterRes, profileRes] = await Promise.allSettled([
+          analyticsApi.getPublicCounter(),
+          profileApi.get(),
+        ]);
+        if (counterRes.status === 'fulfilled' && counterRes.value.data?.success) {
+          setVisitorStats(counterRes.value.data.data);
+        }
+        if (profileRes.status === 'fulfilled' && profileRes.value.data?.success) {
+          const links = profileRes.value.data.data.socialLinks || {};
+          setContactInfo((prev) => ({
+            email: links.email || prev.email,
+            phone: links.phone || prev.phone,
+            github: links.github || prev.github,
+            linkedin: links.linkedin || prev.linkedin,
+          }));
         }
       } catch (err) {
         // Fallback default numbers
       }
     };
-    fetchCounters();
+    fetchData();
   }, []);
 
   return (
@@ -108,13 +126,15 @@ const Footer = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Mail size={16} color="var(--accent-cyan)" />
-                <a href="mailto:hariharan@example.com" style={{ color: 'inherit', textDecoration: 'none' }}>
-                  hariharan@example.com
+                <a href={`mailto:${contactInfo.email}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                  {contactInfo.email}
                 </a>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Phone size={16} color="var(--accent-cyan)" />
-                <span>+91 98765 43210</span>
+                <a href={`tel:${contactInfo.phone.replace(/\s+/g, '')}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                  {contactInfo.phone}
+                </a>
               </div>
             </div>
 

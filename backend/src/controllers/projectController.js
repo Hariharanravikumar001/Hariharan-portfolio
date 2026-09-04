@@ -56,6 +56,16 @@ const getProjects = async (req, res, next) => {
 const getProject = async (req, res, next) => {
   try {
     const param = req.params.idOrSlug;
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      const { mockProjects } = require('../utils/mockStore');
+      const project = mockProjects.find((p) => p._id === param || p.slug === param);
+      if (!project) {
+        return res.status(404).json({ success: false, message: 'Project not found' });
+      }
+      return res.json({ success: true, data: project });
+    }
+
     const project = param.match(/^[0-9a-fA-F]{24}$/)
       ? await Project.findById(param)
       : await Project.findOne({ slug: param });

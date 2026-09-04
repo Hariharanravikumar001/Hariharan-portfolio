@@ -30,11 +30,14 @@ const getOS = (ua = '') => {
 };
 
 const visitorTracker = async (req, res, next) => {
-  // Skip static assets, health checks, or admin API paths
+  // Skip non-GET, static assets, health checks, analytics, auth, or admin sessions
   if (
-    req.path.startsWith('/api/admin') ||
+    req.method !== 'GET' ||
     req.path.startsWith('/uploads') ||
-    req.method !== 'GET'
+    req.path === '/api/health' ||
+    req.path.startsWith('/api/analytics') ||
+    req.path.startsWith('/api/auth') ||
+    Boolean(req.headers.authorization)
   ) {
     return next();
   }

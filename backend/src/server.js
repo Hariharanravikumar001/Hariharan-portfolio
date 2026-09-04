@@ -16,7 +16,6 @@ const projectRoutes = require('./routes/projectRoutes');
 const experienceRoutes = require('./routes/experienceRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
-const blogRoutes = require('./routes/blogRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 
@@ -86,7 +85,6 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/experiences', experienceRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/resumes', resumeRoutes);
-app.use('/api/blogs', blogRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/analytics', analyticsRoutes);
 

@@ -52,6 +52,22 @@ const getActiveResumes = async (req, res, next) => {
 // @access  Public
 const trackDownload = async (req, res, next) => {
   try {
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      const { mockResumes } = require('../utils/mockStore');
+      const resume = mockResumes.find((r) => r._id === req.params.id);
+      if (!resume) {
+        return res.status(404).json({ success: false, message: 'Resume not found' });
+      }
+      resume.downloadCount = (resume.downloadCount || 0) + 1;
+      return res.json({
+        success: true,
+        downloadUrl: resume.fileUrl,
+        fileName: resume.fileName || `${resume.title.replace(/\s+/g, '_')}.pdf`,
+        downloadCount: resume.downloadCount,
+      });
+    }
+
     const resume = await Resume.findById(req.params.id);
     if (!resume) {
       return res.status(404).json({ success: false, message: 'Resume not found' });

@@ -7,14 +7,12 @@ import {
   Layers,
   FileText,
   Award,
-  BookOpen,
   Mail,
   BarChart3,
   LogOut,
   ExternalLink,
   Menu,
   X,
-  Shield,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../../components/ThemeToggle';

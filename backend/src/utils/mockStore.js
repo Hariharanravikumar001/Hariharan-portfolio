@@ -289,45 +289,6 @@ let mockResumes = [
   },
 ];
 
-const mockBlogs = [
-  {
-    _id: 'b1',
-    title: 'Mastering the MERN Stack: Architectural Patterns for Scalable Web Apps',
-    slug: 'mastering-mern-stack-architectural-patterns',
-    summary: 'A comprehensive guide on structuring Node.js controllers, decoupling business logic, and architecting modular React applications.',
-    content: 'Building enterprise-grade applications with MongoDB, Express, React, and Node.js requires more than just connecting endpoints. In this article, we explore clean code principles, modular folder structures, and separation of concerns.\n\n1. Separation of Concerns: Decouple routing declarations from business controller logic.\n2. Scalable State: Use Context API and React Hooks.\n3. Robust Security: Always validate inputs and sanitize MongoDB queries.',
-    category: 'Full Stack',
-    tags: ['MERN', 'Node.js', 'React', 'Architecture'],
-    readTime: '6 min read',
-    views: 312,
-    published: true,
-    comments: [
-      {
-        _id: 'c1',
-        name: 'Arun Kumar',
-        email: 'arun@example.com',
-        comment: 'Outstanding architectural breakdown Hariharan! The tips on controller decoupling are spot on.',
-        createdAt: new Date(),
-      },
-    ],
-    createdAt: new Date(),
-  },
-  {
-    _id: 'b2',
-    title: 'Building Modern Glassmorphism UIs in React without Performance Penalties',
-    slug: 'building-glassmorphism-uis-react',
-    summary: 'How to leverage CSS backdrop-filter, responsive blur gradients, and GPU acceleration for ultra-slick dark mode designs.',
-    content: 'Glassmorphism creates depth and visual hierarchy by using semi-transparent backgrounds with backdrop-filter: blur(12px) and translucent borders.\n\nEnsure hardware acceleration by avoiding nested intensive blur effects on mobile devices.',
-    category: 'UI/UX & Frontend',
-    tags: ['CSS3', 'Glassmorphism', 'React', 'Design'],
-    readTime: '4 min read',
-    views: 184,
-    published: true,
-    comments: [],
-    createdAt: new Date(),
-  },
-];
-
 let mockMessages = [
   {
     _id: 'm1',
@@ -350,6 +311,5 @@ module.exports = {
   mockExperiences,
   mockCertificates,
   mockResumes,
-  mockBlogs,
   mockMessages,
 };

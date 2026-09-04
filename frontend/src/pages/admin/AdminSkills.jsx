@@ -80,7 +80,7 @@ const AdminSkills = () => {
             Skills Management
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
-            Add, update, or remove technical skills and adjust proficiency percentages.
+            Add, update, or organize technical skills and technology categories.
           </p>
         </div>
         <button

@@ -97,15 +97,6 @@ export const resumesApi = {
   toggleActive: (id) => api.patch(`/resumes/${id}/toggle`),
 };
 
-export const blogsApi = {
-  getAll: (params) => api.get('/blogs', { params }),
-  getBySlug: (slug) => api.get(`/blogs/${slug}`),
-  create: (data) => api.post('/blogs', data),
-  update: (id, data) => api.put(`/blogs/${id}`, data),
-  delete: (id) => api.delete(`/blogs/${id}`),
-  addComment: (id, data) => api.post(`/blogs/${id}/comments`, data),
-};
-
 export const contactApi = {
   submit: (data) => api.post('/contact', data),
   getMessages: (params) => api.get('/contact/messages', { params }),
