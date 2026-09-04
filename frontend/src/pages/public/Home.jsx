@@ -345,41 +345,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Verified Metrics Overview Banner */}
-      <section style={{ padding: '30px 0', borderTop: '1px solid var(--border-glass)', borderBottom: '1px solid var(--border-glass)' }}>
-        <div className="container">
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '24px',
-              textAlign: 'center',
-            }}
-          >
-            <div className="glass-card" style={{ padding: '24px' }}>
-              <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--accent-cyan)' }}>
-                {featuredProjects.length || 3}
-              </div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Featured Projects</div>
-            </div>
-            <div className="glass-card" style={{ padding: '24px' }}>
-              <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--accent-purple)' }}>5</div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Specialized Resumes</div>
-            </div>
-            <div className="glass-card" style={{ padding: '24px' }}>
-              <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--accent-emerald)' }}>100%</div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Dedicated & Responsive</div>
-            </div>
-            <div className="glass-card" style={{ padding: '24px' }}>
-              <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--accent-amber)' }}>
-                {visitorStats.downloadCount}
-              </div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Resume Downloads</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Featured Projects Preview */}
       <section style={{ padding: '90px 0' }}>
         <div className="container">
@@ -453,39 +418,6 @@ const Home = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Multiple Resumes CTA Banner */}
-      <section style={{ paddingBottom: '90px' }}>
-        <div className="container">
-          <div
-            className="glass-panel"
-            style={{
-              padding: '48px',
-              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '30px',
-            }}
-          >
-            <div>
-              <span className="badge" style={{ marginBottom: '10px' }}>Resume Central</span>
-              <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '10px' }}>
-                Tailored Resumes For Every Role
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', maxWidth: '540px', fontSize: '0.98rem' }}>
-                Download role-specific versions crafted for Frontend, MERN Stack, Full Stack, Software Engineering, and Technical Support opportunities.
-              </p>
-            </div>
-            <Link to="/resume" className="btn-primary" style={{ padding: '14px 28px', fontSize: '1rem' }}>
-              <Download size={18} />
-              <span>Explore 5 Resumes</span>
-            </Link>
           </div>
         </div>
       </section>

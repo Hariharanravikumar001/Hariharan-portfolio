@@ -94,7 +94,7 @@ const Footer = () => {
               <Link to="/skills" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Technical Skillset</Link>
               <Link to="/projects" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Featured Projects</Link>
               <Link to="/experience" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Work Experience</Link>
-              <Link to="/resume" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Resume Central (5 Formats)</Link>
+              <Link to="/resume" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Resumes & CVs</Link>
               <Link to="/certificates" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Certifications</Link>
               <Link to="/contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Get in Touch</Link>
             </div>
