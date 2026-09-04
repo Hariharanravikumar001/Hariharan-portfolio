@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Search, ExternalLink, Github, FileText, Eye, Layers } from 'lucide-react';
 import { projectsApi } from '../../services/api';
 import ProjectModal from '../../components/ProjectModal';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
+import { ProjectSkeletonCard } from '../../components/SkeletonLoader';
 
 const Projects = () => {
+  useDocumentTitle('Featured Projects & Applications');
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -78,7 +81,19 @@ const Projects = () => {
       </div>
 
       {/* Projects Grid */}
-      {projects.length === 0 && !loading ? (
+      {loading ? (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            gap: '30px',
+          }}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ProjectSkeletonCard key={i} />
+          ))}
+        </div>
+      ) : projects.length === 0 ? (
         <div className="glass-panel" style={{ textAlign: 'center', padding: '60px 20px' }}>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
             No projects found matching your search criteria.

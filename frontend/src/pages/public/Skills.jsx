@@ -12,8 +12,11 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { skillsApi } from '../../services/api';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
+import { SkillSkeletonCard } from '../../components/SkeletonLoader';
 
 const Skills = () => {
+  useDocumentTitle('Technical Skills & Stack');
   const [skills, setSkills] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [loading, setLoading] = useState(true);
@@ -92,7 +95,14 @@ const Skills = () => {
           gap: '20px',
         }}
       >
-        {skills.map((skill) => (
+        {loading ? (
+          Array.from({ length: 8 }).map((_, i) => <SkillSkeletonCard key={i} />)
+        ) : skills.length === 0 ? (
+          <div className="glass-panel" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px' }}>
+            <p style={{ color: 'var(--text-secondary)' }}>No skills found for this category.</p>
+          </div>
+        ) : (
+          skills.map((skill) => (
           <div
             key={skill._id}
             className="glass-card"
@@ -148,7 +158,7 @@ const Skills = () => {
               </span>
             </div>
           </div>
-        ))}
+        )))}
       </div>
     </div>
   );

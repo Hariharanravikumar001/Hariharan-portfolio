@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Sparkles, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Sparkles, MessageCircle, Copy, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { contactApi, profileApi } from '../../services/api';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const Contact = () => {
+  useDocumentTitle('Get In Touch | Contact Me');
   const [profile, setProfile] = useState(null);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedPhone, setCopiedPhone] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,12 +16,25 @@ const Contact = () => {
     company: '',
     subject: '',
     message: '',
+    website_trap: '',
   });
 
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [serverMessage, setServerMessage] = useState('');
+
+  const handleCopy = (type, text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    if (type === 'email') {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    } else if (type === 'phone') {
+      setCopiedPhone(true);
+      setTimeout(() => setCopiedPhone(false), 2000);
+    }
+  };
 
   useEffect(() => {
     profileApi.get()
@@ -120,58 +137,104 @@ const Contact = () => {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(56, 189, 248, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--accent-cyan)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Email Inquiries</div>
+                  <a
+                    href={`mailto:${profile?.socialLinks?.email || 'hariharan@hariharan.dev'}`}
+                    style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}
+                  >
+                    {profile?.socialLinks?.email || 'hariharan@hariharan.dev'}
+                  </a>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleCopy('email', profile?.socialLinks?.email || 'hariharan@hariharan.dev')}
+                title={copiedEmail ? 'Copied!' : 'Copy email address'}
                 style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  background: 'rgba(56, 189, 248, 0.12)',
+                  background: copiedEmail ? 'rgba(16, 185, 129, 0.2)' : 'var(--bg-input)',
+                  border: '1px solid var(--border-glass)',
+                  color: copiedEmail ? 'var(--accent-emerald)' : 'var(--text-muted)',
+                  borderRadius: '8px',
+                  padding: '8px',
+                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--accent-cyan)',
-                  flexShrink: 0,
+                  gap: '4px',
+                  fontSize: '0.78rem',
+                  transition: 'all 0.2s',
                 }}
               >
-                <Mail size={20} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Email Inquiries</div>
-                <a
-                  href={`mailto:${profile?.socialLinks?.email || 'hariharan@hariharan.dev'}`}
-                  style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}
-                >
-                  {profile?.socialLinks?.email || 'hariharan@hariharan.dev'}
-                </a>
-              </div>
+                {copiedEmail ? <Check size={16} /> : <Copy size={16} />}
+                {copiedEmail && <span style={{ fontWeight: 600 }}>Copied!</span>}
+              </button>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(16, 185, 129, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--accent-emerald)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Phone size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Phone & WhatsApp</div>
+                  <a
+                    href={`tel:${(profile?.socialLinks?.phone || '+91 98765 43210').replace(/\s+/g, '')}`}
+                    style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}
+                  >
+                    {profile?.socialLinks?.phone || '+91 98765 43210'}
+                  </a>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleCopy('phone', profile?.socialLinks?.phone || '+91 98765 43210')}
+                title={copiedPhone ? 'Copied!' : 'Copy phone number'}
                 style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  background: 'rgba(16, 185, 129, 0.12)',
+                  background: copiedPhone ? 'rgba(16, 185, 129, 0.2)' : 'var(--bg-input)',
+                  border: '1px solid var(--border-glass)',
+                  color: copiedPhone ? 'var(--accent-emerald)' : 'var(--text-muted)',
+                  borderRadius: '8px',
+                  padding: '8px',
+                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--accent-emerald)',
-                  flexShrink: 0,
+                  gap: '4px',
+                  fontSize: '0.78rem',
+                  transition: 'all 0.2s',
                 }}
               >
-                <Phone size={20} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Phone & WhatsApp</div>
-                <a
-                  href={`tel:${(profile?.socialLinks?.phone || '+91 98765 43210').replace(/\s+/g, '')}`}
-                  style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'none' }}
-                >
-                  {profile?.socialLinks?.phone || '+91 98765 43210'}
-                </a>
-              </div>
+                {copiedPhone ? <Check size={16} /> : <Copy size={16} />}
+                {copiedPhone && <span style={{ fontWeight: 600 }}>Copied!</span>}
+              </button>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -354,6 +417,20 @@ const Contact = () => {
                   className="glass-input"
                 />
                 {errors.message && <span style={{ color: 'var(--accent-rose)', fontSize: '0.78rem' }}>{errors.message}</span>}
+              </div>
+
+              {/* Honeypot Trap Field (Hidden from humans, traps automated spam bots) */}
+              <div style={{ display: 'none', position: 'absolute', left: '-9999px' }} aria-hidden="true">
+                <label htmlFor="website_trap">Leave this empty</label>
+                <input
+                  id="website_trap"
+                  type="text"
+                  name="website_trap"
+                  tabIndex="-1"
+                  autoComplete="off"
+                  value={formData.website_trap || ''}
+                  onChange={(e) => setFormData({ ...formData, website_trap: e.target.value })}
+                />
               </div>
 
               {/* Submit Button */}

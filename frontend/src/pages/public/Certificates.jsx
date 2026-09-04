@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Award, ExternalLink, Download, Eye, Calendar, X } from 'lucide-react';
 import { certificatesApi } from '../../services/api';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const Certificates = () => {
+  useDocumentTitle('Certifications & Credentials');
   const [certificates, setCertificates] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCert, setSelectedCert] = useState(null);

@@ -8,12 +8,19 @@
     "dev": "nodemon src/server.js",
     "seed": "node scripts/seed.js"
   },
-  "keywords": ["portfolio", "resume-manager", "express", "mongodb", "mern"],
+  "keywords": [
+    "portfolio",
+    "resume-manager",
+    "express",
+    "mongodb",
+    "mern"
+  ],
   "author": "Hariharan Ravikumar",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.5",

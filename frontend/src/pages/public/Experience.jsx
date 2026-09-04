@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Briefcase, Calendar, MapPin, Award, CheckCircle, ExternalLink } from 'lucide-react';
 import { experiencesApi } from '../../services/api';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const Experience = () => {
+  useDocumentTitle('Career Experience & Journey');
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
 

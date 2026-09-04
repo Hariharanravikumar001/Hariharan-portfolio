@@ -8,7 +8,15 @@ const { createObjectCsvStringifier } = require('csv-writer');
 // @access  Public
 const submitContactMessage = async (req, res, next) => {
   try {
-    const { name, email, phone, company, subject, message } = req.body;
+    const { name, email, phone, company, subject, message, website_trap } = req.body;
+
+    // Anti-spam Honeypot Check: If the hidden honeypot field is populated, silently acknowledge without saving
+    if (website_trap && String(website_trap).trim().length > 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'Thank you! Your message has been sent successfully.',
+      });
+    }
 
     // Strict validation
     if (!name || !name.trim()) {

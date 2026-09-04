@@ -11,8 +11,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { profileApi, experiencesApi } from '../../services/api';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const About = () => {
+  useDocumentTitle('About Me | Full Stack Developer');
   const [profile, setProfile] = useState(null);
   const [experiences, setExperiences] = useState([]);
 

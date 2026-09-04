@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 const visitorTracker = require('./middleware/visitorTracker');
 const { apiLimiter } = require('./middleware/rateLimiter');
 const errorHandler = require('./middleware/errorHandler');
+const compression = require('compression');
 
 // Route Imports
 const authRoutes = require('./routes/authRoutes');
@@ -30,6 +31,9 @@ app.use(
     crossOriginResourcePolicy: false,
   })
 );
+
+// Response compression middleware
+app.use(compression());
 
 // CORS configuration
 const allowedOrigins = [

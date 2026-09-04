@@ -16,8 +16,10 @@ import {
   Award,
 } from 'lucide-react';
 import { profileApi, projectsApi, analyticsApi } from '../../services/api';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const Home = () => {
+  useDocumentTitle('Home | Full Stack Developer & MERN Specialist');
   const [profile, setProfile] = useState(null);
   const [featuredProjects, setFeaturedProjects] = useState([]);
   const [visitorStats, setVisitorStats] = useState({ visitorCount: 0, downloadCount: 0, projectCount: 3 });

@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Public Pages
 import Home from './pages/public/Home';
@@ -12,6 +14,7 @@ import Experience from './pages/public/Experience';
 import Certificates from './pages/public/Certificates';
 import Resume from './pages/public/Resume';
 import Contact from './pages/public/Contact';
+import NotFound from './pages/public/NotFound';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -33,40 +36,45 @@ const PublicLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };
 
 function App() {
   return (
-    <Routes>
-      {/* Public Pages */}
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/skills" element={<Skills />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/experience" element={<Experience />} />
-        <Route path="/certificates" element={<Certificates />} />
-        <Route path="/resume" element={<Resume />} />
-        <Route path="/contact" element={<Contact />} />
-      </Route>
+    <ErrorBoundary>
+      <Routes>
+        {/* Public Pages */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/skills" element={<Skills />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/experience" element={<Experience />} />
+          <Route path="/certificates" element={<Certificates />} />
+          <Route path="/resume" element={<Resume />} />
+          <Route path="/contact" element={<Contact />} />
+          {/* 404 Catch-All */}
+          <Route path="*" element={<NotFound />} />
+        </Route>
 
-      {/* Admin Login */}
-      <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Admin Login */}
+        <Route path="/admin/login" element={<AdminLogin />} />
 
-      {/* Protected Admin Portal */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="profile" element={<AdminProfile />} />
-        <Route path="skills" element={<AdminSkills />} />
-        <Route path="projects" element={<AdminProjects />} />
-        <Route path="resumes" element={<AdminResumes />} />
-        <Route path="certificates" element={<AdminCertificates />} />
-        <Route path="messages" element={<AdminMessages />} />
-        <Route path="analytics" element={<AdminAnalytics />} />
-      </Route>
-    </Routes>
+        {/* Protected Admin Portal */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="profile" element={<AdminProfile />} />
+          <Route path="skills" element={<AdminSkills />} />
+          <Route path="projects" element={<AdminProjects />} />
+          <Route path="resumes" element={<AdminResumes />} />
+          <Route path="certificates" element={<AdminCertificates />} />
+          <Route path="messages" element={<AdminMessages />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+        </Route>
+      </Routes>
+    </ErrorBoundary>
   );
 }
 

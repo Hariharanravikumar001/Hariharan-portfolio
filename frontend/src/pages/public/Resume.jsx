@@ -11,8 +11,11 @@ import {
 } from 'lucide-react';
 import { resumesApi } from '../../services/api';
 import ResumePreviewModal from '../../components/ResumePreviewModal';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
+import { ResumeSkeletonCard } from '../../components/SkeletonLoader';
 
 const Resume = () => {
+  useDocumentTitle('Resume Central | Specialized Resumes');
   const [resumes, setResumes] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [previewResume, setPreviewResume] = useState(null);
@@ -97,7 +100,14 @@ const Resume = () => {
           gap: '30px',
         }}
       >
-        {resumes.map((resume) => (
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => <ResumeSkeletonCard key={i} />)
+        ) : resumes.length === 0 ? (
+          <div className="glass-panel" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '50px 20px' }}>
+            <p style={{ color: 'var(--text-secondary)' }}>No resumes available in this category.</p>
+          </div>
+        ) : (
+          resumes.map((resume) => (
           <div
             key={resume._id}
             className="glass-panel"
@@ -210,7 +220,7 @@ const Resume = () => {
               </button>
             </div>
           </div>
-        ))}
+        )))}
       </div>
 
       {/* PDF Modal Viewer */}
