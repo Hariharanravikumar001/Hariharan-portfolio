@@ -414,18 +414,6 @@ const AdminLogin = () => {
             {/* MFA Code Form */}
             <form onSubmit={handleMfaSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    color: 'var(--text-secondary)',
-                    marginBottom: '8px',
-                    textAlign: 'center',
-                  }}
-                >
-                  Enter 6-Digit Code from Zoho OneAuth
-                </label>
                 <div style={{ position: 'relative' }}>
                   <KeyRound
                     size={18}
