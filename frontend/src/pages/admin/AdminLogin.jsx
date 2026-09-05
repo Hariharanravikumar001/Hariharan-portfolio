@@ -30,7 +30,14 @@ const AdminLogin = () => {
         navigate('/admin');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid username or password. Please try again.');
+      const serverMsg = err.response?.data?.message;
+      if (serverMsg) {
+        setError(serverMsg);
+      } else if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
+        setError('Server is spinning up (cold start) or unreachable. Please wait 30 seconds and try again.');
+      } else {
+        setError('Invalid username or password. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
