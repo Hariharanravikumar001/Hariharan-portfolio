@@ -14,6 +14,7 @@ const protect = async (req, res, next) => {
         req.user = {
           _id: decoded.id,
           name: process.env.ADMIN_NAME || 'Hariharan Ravikumar',
+          username: process.env.ADMIN_USERNAME || 'admin',
           email: process.env.ADMIN_EMAIL || 'admin@hariharan.dev',
           role: 'admin',
         };

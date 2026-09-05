@@ -10,7 +10,7 @@ const generateToken = (id) => {
 };
 
 // Helper to get user object
-const getUserObject = async (id, fallbackEmail) => {
+const getUserObject = async (id, fallbackIdentifier) => {
   const mongoose = require('mongoose');
   if (mongoose.connection.readyState === 1 && id !== 'admin-offline-id') {
     const user = await User.findById(id);
@@ -18,7 +18,8 @@ const getUserObject = async (id, fallbackEmail) => {
       return {
         id: user._id,
         name: user.name,
-        email: user.email,
+        username: user.username || process.env.ADMIN_USERNAME || 'admin',
+        email: user.email || '',
         role: user.role,
         avatar: user.avatar,
       };
@@ -28,62 +29,112 @@ const getUserObject = async (id, fallbackEmail) => {
   return {
     id: 'admin-offline-id',
     name: process.env.ADMIN_NAME || 'Hariharan Ravikumar',
-    email: fallbackEmail || process.env.ADMIN_EMAIL || 'admin@hariharan.dev',
+    username: process.env.ADMIN_USERNAME || 'admin',
+    email: fallbackIdentifier || process.env.ADMIN_EMAIL || 'admin@hariharan.dev',
     role: 'admin',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
   };
 };
 
-// @desc    Direct Email and Password Sign In
+// @desc    Admin Sign In with Username and Password
 // @route   POST /api/auth/login
 // @access  Public
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
+    const identifier = (username || email || '').trim();
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide email and password' });
+    if (!identifier || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide username and password' });
     }
 
     const mongoose = require('mongoose');
-    const defaultEmail = process.env.ADMIN_EMAIL || 'admin@hariharan.dev';
+    const defaultUsername = (process.env.ADMIN_USERNAME || 'admin').trim();
+    const defaultEmail = (process.env.ADMIN_EMAIL || 'admin@hariharan.dev').trim();
     const defaultPass = process.env.ADMIN_PASSWORD || 'Admin@12345';
 
     let authenticatedUserId = null;
-    let authenticatedEmail = email;
+    let authenticatedIdentifier = identifier;
 
     // Handle offline / development mode without active MongoDB
     if (mongoose.connection.readyState !== 1) {
-      if (email.toLowerCase() === defaultEmail.toLowerCase() && password === defaultPass) {
+      if (
+        (identifier.toLowerCase() === defaultUsername.toLowerCase() ||
+          identifier.toLowerCase() === defaultEmail.toLowerCase()) &&
+        password === defaultPass
+      ) {
         authenticatedUserId = 'admin-offline-id';
-        authenticatedEmail = defaultEmail;
+        authenticatedIdentifier = defaultUsername;
       } else {
-        return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        return res.status(401).json({ success: false, message: 'Invalid username or password' });
       }
     } else {
-      const user = await User.findOne({ email }).select('+password');
-      if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid email or password' });
-      }
+      // Find user by username OR email (case-insensitive)
+      const safeIdentifier = identifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let user = await User.findOne({
+        $or: [
+          { username: { $regex: new RegExp(`^${safeIdentifier}$`, 'i') } },
+          { email: { $regex: new RegExp(`^${safeIdentifier}$`, 'i') } },
+        ],
+      }).select('+password');
 
-      const isMatch = await user.matchPassword(password);
-      if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Invalid email or password' });
+      const matchesDefaultEnv =
+        (identifier.toLowerCase() === defaultUsername.toLowerCase() ||
+          identifier.toLowerCase() === defaultEmail.toLowerCase()) &&
+        password === defaultPass;
+
+      if (!user) {
+        if (matchesDefaultEnv) {
+          // Provision or recover admin user in database
+          user = await User.findOne({ role: 'admin' }).select('+password');
+          if (user) {
+            user.username = defaultUsername;
+            user.password = password;
+            await user.save();
+          } else {
+            user = await User.create({
+              name: process.env.ADMIN_NAME || 'Hariharan Ravikumar',
+              username: defaultUsername,
+              email: defaultEmail,
+              password: defaultPass,
+              role: 'admin',
+              avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+            });
+          }
+        } else {
+          return res.status(401).json({ success: false, message: 'Invalid username or password' });
+        }
+      } else {
+        const isMatch = await user.matchPassword(password);
+        if (!isMatch) {
+          if (matchesDefaultEnv) {
+            user.password = defaultPass;
+            await user.save();
+          } else {
+            return res.status(401).json({ success: false, message: 'Invalid username or password' });
+          }
+        }
+
+        // Backfill username if not yet saved on existing user
+        if (!user.username) {
+          user.username = defaultUsername;
+          await user.save();
+        }
       }
 
       authenticatedUserId = user._id;
-      authenticatedEmail = user.email;
+      authenticatedIdentifier = user.username || user.email;
     }
 
     // Direct Login Successful - Generate final JWT
     const token = generateToken(authenticatedUserId);
-    const userObj = await getUserObject(authenticatedUserId, authenticatedEmail);
+    const userObj = await getUserObject(authenticatedUserId, authenticatedIdentifier);
 
     res.json({
       success: true,
       token,
       user: userObj,
-      message: 'Signed in successfully with email and password.',
+      message: 'Signed in successfully with username and password.',
     });
   } catch (error) {
     next(error);

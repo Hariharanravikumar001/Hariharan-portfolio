@@ -141,6 +141,7 @@ JWT_EXPIRE=7d
 
 # Default Admin Credentials
 ADMIN_NAME=Hariharan Ravikumar
+ADMIN_USERNAME=admin
 ADMIN_EMAIL=admin@hariharan.dev
 ADMIN_PASSWORD=Admin@12345
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Lock,
-  Mail,
+  User,
   ArrowRight,
   ShieldCheck,
   AlertCircle,
@@ -11,7 +11,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('admin@hariharan.dev');
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('Admin@12345');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,13 +24,13 @@ const AdminLogin = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await login(email, password);
+      const res = await login(username, password);
 
       if (res && res.success && res.token) {
         navigate('/admin');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password. Please try again.');
+      setError(err.response?.data?.message || 'Invalid username or password. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -104,7 +104,7 @@ const AdminLogin = () => {
           </div>
         )}
 
-        {/* Email & Password Form */}
+        {/* Username & Password Form */}
         <form onSubmit={handlePasswordLogin} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
             <label
@@ -116,10 +116,10 @@ const AdminLogin = () => {
                 marginBottom: '6px',
               }}
             >
-              Email Address
+              Username
             </label>
             <div style={{ position: 'relative' }}>
-              <Mail
+              <User
                 size={16}
                 style={{
                   position: 'absolute',
@@ -130,13 +130,14 @@ const AdminLogin = () => {
                 }}
               />
               <input
-                type="email"
+                type="text"
                 required
-                placeholder="admin@hariharan.dev"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="glass-input"
                 style={{ paddingLeft: '40px' }}
+                autoComplete="username"
               />
             </div>
           </div>

@@ -24,10 +24,10 @@ const contactLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Auth endpoints limiter (login brute force protection): 10 requests per 15 mins
+// Auth endpoints limiter (login brute force protection): 30 requests per 15 mins
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 30,
   message: {
     success: false,
     message: 'Too many login attempts. Please try again after 15 minutes.',

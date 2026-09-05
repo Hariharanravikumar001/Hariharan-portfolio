@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
     verifyUser();
   }, [token]);
 
-  const login = async (email, password) => {
-    const res = await authApi.login({ email, password });
+  const login = async (username, password) => {
+    const res = await authApi.login({ username, password });
     if (res.data.success) {
       setToken(res.data.token);
       setUser(res.data.user);

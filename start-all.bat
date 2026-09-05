@@ -21,5 +21,5 @@ echo ========================================================
 echo System is now running!
 echo Public Portfolio: http://localhost:5173
 echo Admin Console:    http://localhost:5173/admin
-echo Admin Login:      admin@hariharan.dev / Admin@12345
+echo Admin Login:      admin / Admin@12345
 echo ========================================================

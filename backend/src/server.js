@@ -22,6 +22,9 @@ const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const app = express();
 
+// Trust proxy for reverse proxies (Render, Vercel, Nginx)
+app.set('trust proxy', 1);
+
 // Connect Database
 connectDB();
 
