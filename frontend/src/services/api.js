@@ -2,7 +2,13 @@ import axios from 'axios';
 
 const formatBaseUrl = () => {
   let url = import.meta.env.VITE_API_BASE_URL;
-  if (!url) return '/api';
+  if (!url) {
+    // If running in browser and not on localhost, use the live Render backend
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return 'https://hariharan-portfolio-backend.onrender.com/api';
+    }
+    return '/api';
+  }
   url = url.trim();
   if (!/^https?:\/\//i.test(url)) {
     url = `https://${url}`;

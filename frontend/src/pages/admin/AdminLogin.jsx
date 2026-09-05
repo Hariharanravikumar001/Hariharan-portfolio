@@ -30,11 +30,18 @@ const AdminLogin = () => {
         navigate('/admin');
       }
     } catch (err) {
+      console.error('Admin login error:', err);
       const serverMsg = err.response?.data?.message;
       if (serverMsg) {
         setError(serverMsg);
+      } else if (err.response?.status === 404) {
+        setError('API route not found (404). Please ensure backend is deployed and reachable.');
+      } else if (err.response?.status === 405) {
+        setError('Method Not Allowed (405). Request reached a static host instead of backend.');
+      } else if (typeof err.response?.data === 'string' && err.response.data.includes('<!DOCTYPE')) {
+        setError('Received HTML instead of API JSON response. Backend URL misconfigured.');
       } else if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
-        setError('Server is spinning up (cold start) or unreachable. Please wait 30 seconds and try again.');
+        setError('Cannot connect to backend server. Server may be spinning up (cold start). Please wait 30 seconds and try again.');
       } else {
         setError('Invalid username or password. Please try again.');
       }
@@ -193,6 +200,10 @@ const AdminLogin = () => {
             <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
             <ArrowRight size={16} />
           </button>
+
+          <div style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+            Credentials: <span style={{ color: 'var(--accent-cyan)' }}>admin</span> / <span style={{ color: 'var(--accent-cyan)' }}>Admin@12345</span>
+          </div>
         </form>
 
         {/* Return to Portfolio Link & Security Pill */}

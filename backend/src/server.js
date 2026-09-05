@@ -38,30 +38,10 @@ app.use(
 // Response compression middleware
 app.use(compression());
 
-// CORS configuration
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:5173',
-  process.env.CLIENT_URL,
-].filter(Boolean);
-
+// CORS configuration - allow all origins so custom domains and cloud previews are never blocked
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-to-server)
-      if (!origin) return callback(null, true);
-      if (
-        allowedOrigins.includes(origin) ||
-        process.env.NODE_ENV === 'development' ||
-        origin.endsWith('.vercel.app') ||
-        origin.endsWith('.onrender.com') ||
-        origin.endsWith('.railway.app')
-      ) {
-        return callback(null, true);
-      }
-      callback(new Error('Blocked by CORS policy'));
-    },
+    origin: true,
     credentials: true,
   })
 );
