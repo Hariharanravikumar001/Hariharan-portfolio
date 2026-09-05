@@ -9,6 +9,7 @@ import {
   Award,
   Mail,
   BarChart3,
+  Shield,
   LogOut,
   ExternalLink,
   Menu,
